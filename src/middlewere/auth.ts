@@ -26,13 +26,13 @@ const auth = (...roles: USERROLE[]) => {
         headers: req.headers as any,
       });
       if (!session) {
-        return  res.status(401).json({
+        return res.status(401).json({
           success: false,
           message: "Your are not authorlized",
         });
       }
       if (!session?.user.emailVerified) {
-       return res.status(403).json({
+        return res.status(403).json({
           success: false,
           message: "Your email is not verified",
         });
@@ -45,7 +45,7 @@ const auth = (...roles: USERROLE[]) => {
         emailVerified: session.user.emailVerified as boolean,
       };
       if (roles.length && !roles.includes(req.user.role as USERROLE)) {
-        res.status(403).json({
+        return res.status(403).json({
           success: false,
           message: "forbiden",
         });
