@@ -10,6 +10,7 @@ async function seedAdmin() {
       email: process.env.ADMIN_EMAIL,
       role: USERROLE.ADMIN,
       password: process.env.ADMIN_PASSWORD,
+      emailVerified: true,
     };
     //check user exist on db or not
     const existingUser = await prisma.user.findUnique({
@@ -30,10 +31,20 @@ async function seedAdmin() {
         body: JSON.stringify(adminData),
       }
     );
+    if (signUpAdmin.ok) {
+      await prisma.user.update({
+        where: {
+          email: adminData.email as string,
+        },
+        data: {
+          emailVerified: true,
+        },
+      });
+    }
     console.log(signUpAdmin);
   } catch (error) {
     console.error(error);
   }
 }
 
-seedAdmin()
+seedAdmin();
