@@ -1,11 +1,11 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { postServices } from "./post.service";
 import { success } from "better-auth/*";
 import { PostStatus } from "../../../generated/prisma/enums";
 import paginationSortingHelper from "../../halpers/paginationSortingHelper";
 import { USERROLE } from "../../middlewere/auth";
 
-const createPost = async (req: Request, res: Response) => {
+const createPost = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = req.user;
     if (!user) {
@@ -17,10 +17,7 @@ const createPost = async (req: Request, res: Response) => {
     const result = await postServices.createPost(req.body, user.id as string);
     res.status(201).json({ result });
   } catch (error) {
-    res.status(400).json({
-      error: "post creation failed",
-      details: error,
-    });
+    next(error);
   }
 };
 const getAllPost = async (req: Request, res: Response) => {
@@ -99,7 +96,7 @@ const getMyPosts = async (req: Request, res: Response) => {
     });
   }
 };
-const updatePost = async (req: Request, res: Response) => {
+const updatePost = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = req.user;
     const { postId } = req.params;
@@ -118,10 +115,7 @@ const updatePost = async (req: Request, res: Response) => {
       result,
     });
   } catch (error) {
-    res.status(400).json({
-      error: "post updated failed",
-      details: error,
-    });
+    next(error);
   }
 };
 const postDelete = async (req: Request, res: Response) => {
